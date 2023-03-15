@@ -9,9 +9,11 @@ import SwiftUI
 
 @main
 struct Status_TrackerApp: App {
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+          
+           StatusTrackerView()
         }
     }
 }
