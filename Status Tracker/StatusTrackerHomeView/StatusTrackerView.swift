@@ -9,6 +9,12 @@ import SwiftUI
 
 struct StatusTrackerView: View {
     @StateObject var viewModel = SheetViewModel()
+    @State var itemIndex:Int?
+    @State var text = ""
+    
+    init() {
+        UITextView.appearance().backgroundColor = .clear
+    }
     
     var body: some View {
         ZStack{
@@ -29,7 +35,7 @@ struct StatusTrackerView: View {
                             .background(Color(hex: "#C4A484"))
                             .overlay(RoundedRectangle(cornerRadius: 10)
                                 .stroke(Color(hex: "#7B3F00"), lineWidth: 5))
-
+                        
                             .padding(.leading,10)
                             .padding(.trailing,150)
                             .padding(.top,140)
@@ -41,7 +47,10 @@ struct StatusTrackerView: View {
             .ignoresSafeArea()
         }
         .onAppear{
-            viewModel.getData()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1){
+                self.viewModel.getData()
+            }
+          
         }
         .loader(isShown: $viewModel.isLoader)
     }
@@ -84,17 +93,6 @@ struct StatusTrackerView: View {
                         Text("\(viewModel.changedDay ?? "")").foregroundColor(.white)
                             .underline()
                     }
-                   // if viewModel.showDateList{
-//                        Image(systemName: "chevron.down.square.fill")
-//                            .resizable()
-//                            .frame(width: 24,height: 24)
-//                            .foregroundColor(.white)
-//                            .onTapGesture {
-//                                viewModel.showDateList = true
-//                            }
-                        
-                   // }
-                    //arrowtriangle.down.square.fill
                 }
                 VStack(alignment: .trailing){
                     Text(" Welcome,").fontWeight(.bold) .foregroundColor(.white)
@@ -115,9 +113,12 @@ struct StatusTrackerView: View {
                 .onTapGesture {
                     viewModel.changedDay = viewModel.dateFormate(date:  viewModel.dataList?.items?[index].date ?? "")
                     viewModel.showDateList = false
+                    
                     if let filteredData = viewModel.dataList?.items {
                         for datum in filteredData where datum.date == viewModel.dataList?.items?[index].date ?? "" {
-                            viewModel.filteredItems = datum
+                            viewModel.filteredItems = datum.datas ?? []
+                            viewModel.textFields = datum.datas ?? []
+                            viewModel.textFields = viewModel.valueMapDataElement()
                         }
                     }
                 }
@@ -128,7 +129,7 @@ struct StatusTrackerView: View {
     @ViewBuilder var scrollView: some View {
         ScrollView(showsIndicators: false){
             VStack(alignment: .leading,spacing: 10) {
-                ForEach(0..<(viewModel.filteredItems?.datas?.count ?? 0) ,id: \.self){ index in
+                ForEach(0..<(viewModel.textFields.count ) ,id: \.self){ index in
                     HStack(spacing: 0){
                         ZStack{
                             Color(hex: viewModel.leftSideDividerColorCode(index: index))
@@ -154,7 +155,7 @@ struct StatusTrackerView: View {
         }
     }
     
-    @ViewBuilder func listSheetView(index: Int) ->  some View{
+    @ViewBuilder func listSheetView(index: Int) ->  some View {
         let datas = viewModel.dataList?.items?.last?.datas?[index]
         ZStack{
             HStack{
@@ -166,11 +167,10 @@ struct StatusTrackerView: View {
                     }.padding()
                         .background(Color(hex: viewModel.nameViewColorCode(index:index)))
                     VStack(alignment: .leading){
-                        VStack(alignment: .leading){
-                            
-                            Text(viewModel.filteredItems?.datas?[index].task ?? "")
-                        }.padding()
                         
+                        VStack(alignment: .leading){
+                            TextEditorView(text: $viewModel.textFields[index].text, placeHolder: "Enter.....", index: index, viewModel: viewModel)
+                        }.padding()
                     }.frame(maxWidth: .infinity,maxHeight: .infinity)
                         .background(Color(hex: viewModel.detailsColorCode(index:index)))
                 }
@@ -196,6 +196,51 @@ struct StatusTrackerView: View {
             .padding(.trailing)
         }
         .padding(.bottom,10)
+    }
+    
+    @ViewBuilder func customTextEditor(placeholder:String,index:Int) -> some View {
+        ZStack(alignment: .topLeading){
+            if text.isEmpty{
+                Text(placeholder)
+                    .foregroundColor(Color.primary.opacity(0.25))
+                    .padding(EdgeInsets(top: 7, leading: 4, bottom: 0, trailing: 0))
+                    .padding(5)
+            }
+            TextEditor(text: $viewModel.textFields[index].text )
+                .background(Color(hex: viewModel.detailsColorCode(index:index)))
+            
+        }
+        .onAppear{
+            UITextView.appearance().backgroundColor = .red
+        }
+        .onDisappear{
+            UITextView.appearance().backgroundColor = nil
+        }
+    }
+}
+
+struct TextEditorView: View {
+    @Binding var text: String
+    var placeHolder:String?
+    var index: Int
+    var viewModel:SheetViewModel
+    var body: some View {
+        ZStack(alignment: .leading) {
+            if text.isEmpty {
+                Text(placeHolder ?? "")
+                    .foregroundColor(Color.primary.opacity(0.25))
+                    .padding(EdgeInsets(top: 7, leading: 4, bottom: 0, trailing: 0))
+                    .padding(5)
+            }
+                TextEditor(text: $text)
+                    .background(Color(hex: viewModel.detailsColorCode(index:index)))
+                    .scrollContentBackground(.hidden)
+          
+        }.onAppear() {
+            UITextView.appearance().backgroundColor = .clear
+        }.onDisappear() {
+            UITextView.appearance().backgroundColor = nil
+        }
     }
 }
 

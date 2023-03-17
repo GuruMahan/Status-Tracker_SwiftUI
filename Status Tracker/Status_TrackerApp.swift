@@ -12,7 +12,7 @@ struct Status_TrackerApp: App {
     
     var body: some Scene {
         WindowGroup {
-          
+           // TextEditorView(textField: <#String#>, textIndex: <#Int#>)
            StatusTrackerView()
         }
     }

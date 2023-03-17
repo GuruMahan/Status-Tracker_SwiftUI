@@ -12,9 +12,14 @@ class SheetViewModel: ObservableObject{
     @Published var dataList: SheetModel?
     @Published var changedDay:String?
     @Published var showDateList:Bool = false
-    @Published var selectedText:String?
-    @Published var filteredItems: Item?
+    @Published var filteredItems: [DataElement] = []
+    @Published var textFields: [DataElement] = []
+    @Published var taskText = ""
     
+//    init() {
+//      
+//    }
+//    
     //MARK: -> DateFormatter
     func dateFormate(date:String) -> String {
         var formattedDate: String = ""
@@ -88,12 +93,13 @@ extension SheetViewModel {
                         if let dat = data{
                             let result = try decoder.decode( SheetModel.self, from: dat)
                             print("result========>",result)
-                            DispatchQueue.main.async {
+                           DispatchQueue.main.async {
                                 self.dataList = result
-                                self.filteredItems = result.items?.last
+                                self.filteredItems = result.items?.last?.datas ?? []
                                 self.isLoader = false
                                 self.changedDay = self.dateFormate(date:  self.dataList?.items?.last?.date ?? "")
-                                self.selectedText = self.dataList?.items?.last?.datas?.last?.task ?? ""
+                                self.textFields = self.valueMapDataElement()
+                            print("=====>?\(self.textFields)")
                             }
                             print(result)
                         }
@@ -106,8 +112,35 @@ extension SheetViewModel {
         }
     }
 }
-
-
+extension SheetViewModel {
+    func valueMapDataElement() -> [DataElement] {
+        var basics: [DataElement] = []
+        for item in filteredItems {
+            var copy = item.copy()
+            if copy.name == "palani" {
+                copy.text = item.task ?? ""
+            }
+            if copy.name == "balaji" {
+                copy.text = item.task ?? ""
+            }
+            if copy.name == "saran" {
+                copy.text = item.task ?? ""
+            }
+            if copy.name == "fazil" {
+                copy.text = item.task ?? ""
+            }
+            if copy.name == "maruthu" {
+                copy.text = item.task ?? ""
+                
+            }
+            if copy.name == "abdullah" {
+                copy.text = item.task ?? ""
+            }
+            basics.append(copy)
+        }
+        return basics
+    }
+}
 //MARK: -> GoogleSheet Link:
 //https://docs.google.com/spreadsheets/d/1brId26gnwb06OvCiLMZRMZeXiCc80Ve2nTLR2SjBASk/edit#gid=0
 //MARK: -> GoogleSheet Api:
