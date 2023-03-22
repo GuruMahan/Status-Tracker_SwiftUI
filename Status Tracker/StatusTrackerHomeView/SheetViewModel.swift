@@ -11,15 +11,15 @@ class SheetViewModel: ObservableObject{
     @Published var isLoader = false
     @Published var dataList: SheetModel?
     @Published var changedDay:String?
+    @Published var changedDate:String?
     @Published var showDateList:Bool = false
     @Published var filteredItems: [DataElement] = []
     @Published var textFields: [DataElement] = []
     @Published var taskText = ""
-    
-//    init() {
-//      
-//    }
-//    
+    @Published var updatedDate = ""
+    @Published var isUpdated: Bool = false
+    @Published var selectedDate: String = ""
+
     //MARK: -> DateFormatter
     func dateFormate(date:String) -> String {
         var formattedDate: String = ""
@@ -32,11 +32,21 @@ class SheetViewModel: ObservableObject{
             newDateString = dateFormatter.string(from: date)
             dateFormatter.dateFormat = "EEEE"
             newDayString = dateFormatter.string(from: date)
-            formattedDate = newDateString + "|" + newDayString
-            print("days====>",newDayString)
+            formattedDate = newDateString + " | " + newDayString
         }
         return formattedDate
     }
+    
+    func updateDateFormate(date:String)  {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ" // set the input date format
+        if let date = dateFormatter.date(from: date){
+            dateFormatter.dateFormat = "M/d/yy"
+           selectedDate = dateFormatter.string(from: date)
+        }
+        
+    }
+    
 }
 
 //MARK: -> UI Functionalities
@@ -78,38 +88,111 @@ extension SheetViewModel {
 
 //MARK: -> GoogleSheet ApiCall
 extension SheetViewModel {
-    func getData(){
+    func getData() {
         isLoader = true
-        let urlString =  "https://script.google.com/macros/s/AKfycbzcPoBAz86gnLfIeAyljB4HwsFEYon6uPhvwTS0Xjk4vXib0nsZ-4zjiVi9lkRUVzW0_w/exec?action=get"
-        let url = URL(string: urlString)
-        if let url = url {
-            var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10)
+        guard let url = URL(string: "https://script.google.com/macros/s/AKfycbymV4tuDSWb1Ql4SBW-8eWG0zNpZMcZ2-tKnS03s-68GuH9B1BYM5pvgWeP-9h2oWIOMA/exec?action=get") else {
+            fatalError("Invalid URL")
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        let session = URLSession.shared
+        let dataTask = session.dataTask(with: request) { [weak self] (data, response, error) in
+            guard let self = self else { return }
+            if let error = error {
+                print(error)
+                return
+            }
+            guard let data = data else {
+                return
+            }
+            do {
+                let decoder = JSONDecoder()
+                let result = try decoder.decode(SheetModel.self, from: data)
+                DispatchQueue.main.async {
+                    self.dataList = result
+                    self.filteredItems = result.items?.last?.datas ?? []
+                    self.changedDay = self.dateFormate(date: result.items?.last?.date ?? "")
+                    self.textFields = self.valueMapDataElement()
+                    self.updateDateFormate(date: result.items?.last?.date ?? "")
+                    self.isLoader = false
+                }
+            } catch {
+            }
+        }
+        dataTask.resume()
+    }
+    
+    func updateDate() {
+        isLoader = true
+        var palaniTask: String = ""
+        var balajiTask: String = ""
+        var saranTask: String = ""
+        var fazilTask: String = ""
+        var maruthuTask: String = ""
+        var abdullahTask: String = ""
+            for nonUpdateData in textFields {
+                if nonUpdateData.name == "palani" {
+                    palaniTask = nonUpdateData.text
+                }
+                if nonUpdateData.name == "balaji" {
+                    balajiTask = nonUpdateData.text
+                }
+                if nonUpdateData.name == "saran" {
+                   saranTask = nonUpdateData.text
+                }
+                if nonUpdateData.name == "fazil" {
+                    fazilTask = nonUpdateData.text
+                }
+                if nonUpdateData.name == "maruthu" {
+                    maruthuTask = nonUpdateData.text
+
+                }
+                if nonUpdateData.name == "abdullah" {
+                    abdullahTask = nonUpdateData.text
+                }
+            }
+   var urlString = "https://script.google.com/macros/s/AKfycby2MrORf9DeGL1sM0F0oDSg4ijg_-Oe5drhHvgoU8wB6uiODyiz4TCy7Z4BKRMZb37EWQ/exec?action=UPDATE"
+        urlString += "&date="
+        urlString += selectedDate
+        urlString += "&palani="
+        urlString += palaniTask
+        urlString += "&fazil="
+        urlString += balajiTask
+        urlString += "&saran="
+        urlString += saranTask
+        urlString += "&balaji="
+        urlString += fazilTask
+        urlString += "&maruthu="
+        urlString += maruthuTask
+        urlString += "&abdullah="
+        urlString += abdullahTask
+        guard let requestUrl = URL(string: urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "") else {
+                        fatalError("Invalid URL")
+                    }
+  var request = URLRequest(url: requestUrl)
             request.httpMethod = "GET"
             let session = URLSession.shared
-            let dataTask = session.dataTask(with: request) { (data, response, error) in
-                if error == nil {
-                    do {
-                        let decoder = JSONDecoder()
-                        if let dat = data{
-                            let result = try decoder.decode( SheetModel.self, from: dat)
-                            print("result========>",result)
-                           DispatchQueue.main.async {
-                                self.dataList = result
-                                self.filteredItems = result.items?.last?.datas ?? []
-                                self.isLoader = false
-                                self.changedDay = self.dateFormate(date:  self.dataList?.items?.last?.date ?? "")
-                                self.textFields = self.valueMapDataElement()
-                            print("=====>?\(self.textFields)")
-                            }
-                            print(result)
-                        }
-                    } catch {
-                        print(error)
+            let dataTask = session.dataTask(with: request) { [weak self] (data, response, error) in
+                guard let self = self else { return }
+                if let error = error {
+                    print(error)
+                    return
+                }
+                guard let data = data else {
+                    return
+                }
+                do {
+                    let decoder = JSONDecoder()
+                    let result = try decoder.decode(SheetModel.self, from: data)
+                    DispatchQueue.main.async {
+                        self.dataList = result
+                        self.isLoader = false
+                        print("=====>?\(self.textFields)")
                     }
+                } catch {
                 }
             }
             dataTask.resume()
-        }
     }
 }
 extension SheetViewModel {
@@ -145,3 +228,4 @@ extension SheetViewModel {
 //https://docs.google.com/spreadsheets/d/1brId26gnwb06OvCiLMZRMZeXiCc80Ve2nTLR2SjBASk/edit#gid=0
 //MARK: -> GoogleSheet Api:
 //"https://script.google.com/macros/s/AKfycbzcPoBAz86gnLfIeAyljB4HwsFEYon6uPhvwTS0Xjk4vXib0nsZ-4zjiVi9lkRUVzW0_w/exec?action=get"
+//POSTAPI ->//https://script.google.com/macros/s/AKfycby2MrORf9DeGL1sM0F0oDSg4ijg_-Oe5drhHvgoU8wB6uiODyiz4TCy7Z4BKRMZb37EWQ/exec?action=UPDATE&date=3/8/23&palani=fazil hjhjjknk&fazil=taskgtrrttrtrbtgbt&saran=syed&balaji=palani&maruthu=syed&abdullah=uyg34touy3gu3iugrowerugwieruygi

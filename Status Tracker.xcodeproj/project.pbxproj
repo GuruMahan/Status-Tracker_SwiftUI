@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		189CFE7C29C6136500635D2F /* IndividualMemberPopUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 189CFE7B29C6136500635D2F /* IndividualMemberPopUpView.swift */; };
+		189CFE7E29C63D8800635D2F /* UIScreenExtention.swift in Sources */ = {isa = PBXBuildFile; fileRef = 189CFE7D29C63D8800635D2F /* UIScreenExtention.swift */; };
+		189F718529C5D51200FF1194 /* AlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 189F718429C5D51200FF1194 /* AlertView.swift */; };
 		18B918AA29BF486900F048A5 /* Status_TrackerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18B918A929BF486900F048A5 /* Status_TrackerApp.swift */; };
 		18B918AC29BF486900F048A5 /* StatusTrackerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18B918AB29BF486900F048A5 /* StatusTrackerView.swift */; };
 		18B918AE29BF486A00F048A5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 18B918AD29BF486A00F048A5 /* Assets.xcassets */; };
@@ -19,6 +22,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		189CFE7B29C6136500635D2F /* IndividualMemberPopUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndividualMemberPopUpView.swift; sourceTree = "<group>"; };
+		189CFE7D29C63D8800635D2F /* UIScreenExtention.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIScreenExtention.swift; sourceTree = "<group>"; };
+		189F718429C5D51200FF1194 /* AlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertView.swift; sourceTree = "<group>"; };
 		18B918A629BF486900F048A5 /* Status Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Status Tracker.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		18B918A929BF486900F048A5 /* Status_TrackerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Status_TrackerApp.swift; sourceTree = "<group>"; };
 		18B918AB29BF486900F048A5 /* StatusTrackerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusTrackerView.swift; sourceTree = "<group>"; };
@@ -42,6 +48,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		189CFE7A29C6130900635D2F /* IndividualMemberPopup */ = {
+			isa = PBXGroup;
+			children = (
+				189CFE7B29C6136500635D2F /* IndividualMemberPopUpView.swift */,
+			);
+			path = IndividualMemberPopup;
+			sourceTree = "<group>";
+		};
+		189F718329C5D4D200FF1194 /* AlertView */ = {
+			isa = PBXGroup;
+			children = (
+				189F718429C5D51200FF1194 /* AlertView.swift */,
+			);
+			path = AlertView;
+			sourceTree = "<group>";
+		};
 		18B9189D29BF486900F048A5 = {
 			isa = PBXGroup;
 			children = (
@@ -62,6 +84,8 @@
 			isa = PBXGroup;
 			children = (
 				18B918C629C043AE00F048A5 /* StatusTrackerHomeView */,
+				189F718329C5D4D200FF1194 /* AlertView */,
+				189CFE7A29C6130900635D2F /* IndividualMemberPopup */,
 				18B918BB29C0431C00F048A5 /* Extentions */,
 				18B918A929BF486900F048A5 /* Status_TrackerApp.swift */,
 				18B918AD29BF486A00F048A5 /* Assets.xcassets */,
@@ -84,6 +108,7 @@
 				18B918BE29C0431C00F048A5 /* Extention + UserDefault.swift */,
 				18B918BF29C0431C00F048A5 /* HexColorExtention.swift */,
 				18B918C029C0431C00F048A5 /* ProgressLoader.swift */,
+				189CFE7D29C63D8800635D2F /* UIScreenExtention.swift */,
 			);
 			path = Extentions;
 			sourceTree = "<group>";
@@ -169,11 +194,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				18B918AC29BF486900F048A5 /* StatusTrackerView.swift in Sources */,
+				189CFE7C29C6136500635D2F /* IndividualMemberPopUpView.swift in Sources */,
 				18B918B829BF5A3900F048A5 /* SheetViewModel.swift in Sources */,
 				18B918AA29BF486900F048A5 /* Status_TrackerApp.swift in Sources */,
 				18B918C429C0431C00F048A5 /* HexColorExtention.swift in Sources */,
 				18B918C529C0431C00F048A5 /* ProgressLoader.swift in Sources */,
+				189F718529C5D51200FF1194 /* AlertView.swift in Sources */,
 				18B918BA29BF5A9600F048A5 /* SheetModel.swift in Sources */,
+				189CFE7E29C63D8800635D2F /* UIScreenExtention.swift in Sources */,
 				18B918C329C0431C00F048A5 /* Extention + UserDefault.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -11,11 +11,13 @@ struct StatusTrackerView: View {
     @StateObject var viewModel = SheetViewModel()
     @State var itemIndex:Int?
     @State var text = ""
+    @State var isShowAlertPopUP = false
+    @State var isShow = false
     
     init() {
         UITextView.appearance().backgroundColor = .clear
     }
-    
+
     var body: some View {
         ZStack{
             VStack{
@@ -45,12 +47,27 @@ struct StatusTrackerView: View {
                 submitView
             }
             .ignoresSafeArea()
+            if isShowAlertPopUP {
+                withAnimation(.easeIn(duration: 1.0)) {
+                    AlertView(isCanclePopUp: $isShowAlertPopUP, isShowSelectedMembers: $isShow)
+                }
+            }
+            
+            VStack{
+                Spacer()
+                IndividualMemberPopUpView(viewModel: viewModel).offset(y: self.isShow ? 0 : UIScreen.main.bounds.height)
+            }.background((self.isShow ? Color.black.opacity(0.3) : Color.clear))
+                .onTapGesture {
+                withAnimation(.easeOut(duration: 0.3)){
+                    self.isShow.toggle()
+                }
+            }
+            .edgesIgnoringSafeArea(.bottom)
         }
         .onAppear{
             DispatchQueue.main.asyncAfter(deadline: .now() + 1){
                 self.viewModel.getData()
             }
-          
         }
         .loader(isShown: $viewModel.isLoader)
     }
@@ -62,7 +79,17 @@ struct StatusTrackerView: View {
                 HStack{
                     Spacer()
                     Image("msgBox").foregroundColor(.white)
+                        .onTapGesture {
+                            withAnimation(.easeIn(duration: 0.2)) {
+                                isShowAlertPopUP = true
+                            }
+                        }
                     Image("verifiedMsg")
+                        .onTapGesture {
+                            withAnimation(.easeIn(duration: 0.2)) {
+                                self.viewModel.updateDate()
+                            }
+                        }
                 }
                 .padding(.bottom,160)
                 .padding(.trailing,20)
@@ -81,16 +108,18 @@ struct StatusTrackerView: View {
             }
         }.frame(maxWidth: .infinity,maxHeight: 351)
     }
-    
+
     @ViewBuilder var TitleView: some View {
         ZStack {
             VStack{
                 HStack{
                     Button {
-                        viewModel.showDateList.toggle()
-                        
+                        withAnimation(.easeIn(duration: 0.2)){
+                            viewModel.showDateList.toggle()
+                        }
                     } label: {
-                        Text("\(viewModel.changedDay ?? "")").foregroundColor(.white)
+                        Text("\(viewModel.changedDay ?? "")")
+                            .foregroundColor(.white)
                             .underline()
                     }
                 }
@@ -113,12 +142,14 @@ struct StatusTrackerView: View {
                 .onTapGesture {
                     viewModel.changedDay = viewModel.dateFormate(date:  viewModel.dataList?.items?[index].date ?? "")
                     viewModel.showDateList = false
-                    
+                    viewModel.updateDateFormate(date:viewModel.dataList?.items?[index].date ?? "")
                     if let filteredData = viewModel.dataList?.items {
                         for datum in filteredData where datum.date == viewModel.dataList?.items?[index].date ?? "" {
                             viewModel.filteredItems = datum.datas ?? []
                             viewModel.textFields = datum.datas ?? []
                             viewModel.textFields = viewModel.valueMapDataElement()
+                           // viewModel.textFields = viewModel.updateValueMapDataElement()
+                            print("====>\(viewModel.valueMapDataElement())")
                         }
                     }
                 }
@@ -131,14 +162,17 @@ struct StatusTrackerView: View {
             VStack(alignment: .leading,spacing: 10) {
                 ForEach(0..<(viewModel.textFields.count ) ,id: \.self){ index in
                     HStack(spacing: 0){
-                        ZStack{
-                            Color(hex: viewModel.leftSideDividerColorCode(index: index))
-                            HStack{
-                                leftSideDividerView
-                                    .frame(width: 1)
-                                listSheetView( index: index)
-                            }.padding(.leading,0)
+                        withAnimation(.easeIn(duration: 0.2)){
+                            ZStack{
+                                Color(hex: viewModel.leftSideDividerColorCode(index: index))
+                                HStack{
+                                    leftSideDividerView
+                                        .frame(width: 1)
+                                    listSheetView( index: index)
+                                }.padding(.leading,0)
+                            }
                         }
+
                     }
                     .padding(5)
                     .cornerRadius(30)
@@ -169,7 +203,7 @@ struct StatusTrackerView: View {
                     VStack(alignment: .leading){
                         
                         VStack(alignment: .leading){
-                            TextEditorView(text: $viewModel.textFields[index].text, placeHolder: "Enter.....", index: index, viewModel: viewModel)
+                            TextEditorView(text: $viewModel.textFields[index].text, placeHolder: "Update Task...", index: index, viewModel: viewModel)
                         }.padding()
                     }.frame(maxWidth: .infinity,maxHeight: .infinity)
                         .background(Color(hex: viewModel.detailsColorCode(index:index)))
@@ -197,26 +231,6 @@ struct StatusTrackerView: View {
         }
         .padding(.bottom,10)
     }
-    
-    @ViewBuilder func customTextEditor(placeholder:String,index:Int) -> some View {
-        ZStack(alignment: .topLeading){
-            if text.isEmpty{
-                Text(placeholder)
-                    .foregroundColor(Color.primary.opacity(0.25))
-                    .padding(EdgeInsets(top: 7, leading: 4, bottom: 0, trailing: 0))
-                    .padding(5)
-            }
-            TextEditor(text: $viewModel.textFields[index].text )
-                .background(Color(hex: viewModel.detailsColorCode(index:index)))
-            
-        }
-        .onAppear{
-            UITextView.appearance().backgroundColor = .red
-        }
-        .onDisappear{
-            UITextView.appearance().backgroundColor = nil
-        }
-    }
 }
 
 struct TextEditorView: View {
@@ -224,18 +238,22 @@ struct TextEditorView: View {
     var placeHolder:String?
     var index: Int
     var viewModel:SheetViewModel
+    @FocusState private var isFocused: Bool
     var body: some View {
         ZStack(alignment: .leading) {
-            if text.isEmpty {
-                Text(placeHolder ?? "")
+             TextEditor(text: $text)
+                 .focused($isFocused)
+                 .background(Color(hex: viewModel.detailsColorCode(index:index)))
+                 .scrollContentBackground(.hidden)
+            if text.isEmpty  {
+                    Text(placeHolder ?? "")
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 12)
                     .foregroundColor(Color.primary.opacity(0.25))
-                    .padding(EdgeInsets(top: 7, leading: 4, bottom: 0, trailing: 0))
-                    .padding(5)
+               .onTapGesture {
+                   isFocused = true
+               }
             }
-                TextEditor(text: $text)
-                    .background(Color(hex: viewModel.detailsColorCode(index:index)))
-                    .scrollContentBackground(.hidden)
-          
         }.onAppear() {
             UITextView.appearance().backgroundColor = .clear
         }.onDisappear() {
@@ -250,6 +268,3 @@ struct ContentView_Previews: PreviewProvider {
         StatusTrackerView()
     }
 }
-
-//Edit - square.and.pencil
-//Done - app.badge.checkmark.fill
