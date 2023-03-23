@@ -19,7 +19,13 @@ class SheetViewModel: ObservableObject{
     @Published var updatedDate = ""
     @Published var isUpdated: Bool = false
     @Published var selectedDate: String = ""
-
+    @Published var isShowUpdateSuccessTost: Bool = false
+    @Published var width:CGFloat = 100
+    @Published var heigth: CGFloat = 100
+    init(){
+        getData()
+    }
+    
     //MARK: -> DateFormatter
     func dateFormate(date:String) -> String {
         var formattedDate: String = ""
@@ -47,11 +53,16 @@ class SheetViewModel: ObservableObject{
         
     }
     
+    func hideKeyBoard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil)
+    }
+    
+   
 }
 
 //MARK: -> UI Functionalities
 extension SheetViewModel {
-    func detailsColorCode(index:Int) -> String{
+    func taskListColorCode(index:Int) -> String{
         switch index % 3 {
         case 1:
             return  "#FFD8E3"
@@ -63,7 +74,7 @@ extension SheetViewModel {
         }
     }
     
-    func nameViewColorCode(index:Int) -> String{
+    func taskNameListColorCode(index:Int) -> String{
         switch index % 3 {
         case 1:
             return  "#EA698F"
@@ -74,7 +85,7 @@ extension SheetViewModel {
         }
     }
     
-    func leftSideDividerColorCode(index:Int) -> String{
+    func taskListLeftCornerColorCode(index:Int) -> String{
         switch index % 3 {
         case 1:
             return  "#ED7B9D"
@@ -112,7 +123,7 @@ extension SheetViewModel {
                     self.dataList = result
                     self.filteredItems = result.items?.last?.datas ?? []
                     self.changedDay = self.dateFormate(date: result.items?.last?.date ?? "")
-                    self.textFields = self.valueMapDataElement()
+                    self.textFields = self.taskTextMapDataElement()
                     self.updateDateFormate(date: result.items?.last?.date ?? "")
                     self.isLoader = false
                 }
@@ -187,7 +198,18 @@ extension SheetViewModel {
                     DispatchQueue.main.async {
                         self.dataList = result
                         self.isLoader = false
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            self.width = 100
+                            self.heigth = 100
+                            self.isShowUpdateSuccessTost = true
+                        }
                         print("=====>?\(self.textFields)")
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                        withAnimation(.easeOut) {
+                           self.isShowUpdateSuccessTost = false
+
+                        }
                     }
                 } catch {
                 }
@@ -196,7 +218,7 @@ extension SheetViewModel {
     }
 }
 extension SheetViewModel {
-    func valueMapDataElement() -> [DataElement] {
+    func taskTextMapDataElement() -> [DataElement] {
         var basics: [DataElement] = []
         for item in filteredItems {
             var copy = item.copy()

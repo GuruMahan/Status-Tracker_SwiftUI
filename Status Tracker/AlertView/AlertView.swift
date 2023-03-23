@@ -32,32 +32,9 @@ struct AlertView: View {
                         .padding(.leading,2)
                 }
                 HStack{
-                    Button {
-                        isSelectedIndMem = false
-                        isSelected = true
-                    } label: {
-                        Image(systemName: isSelected ? "circle.inset.filled" : "circlebadge")
-                            .resizable()
-                            .frame(width: 24,height: 24)
-                            .foregroundColor( isSelected ?  Color(hex: "#300A60") : Color.black.opacity(0.6))
-                    }
                     Text("Send to Channel")
                         .font(.body)
                 }
-                HStack{
-                    Button {
-                        isSelected = false
-                        isSelectedIndMem = true
-                    } label: {
-                        Image(systemName: isSelectedIndMem ? "circle.inset.filled" : "circlebadge")
-                            .resizable()
-                            .frame(width: 24,height: 24)
-                            .foregroundColor( isSelectedIndMem ?  Color(hex: "#300A60") : Color.black.opacity(0.6))
-                    }
-                    Text("Send to individual member")
-                        .font(.body)
-                }
-                
                 HStack(spacing: 60){
                     Button {
                         withAnimation(.easeIn(duration: 0.2)) {
@@ -71,16 +48,11 @@ struct AlertView: View {
                     
                     Button {
                         withAnimation(.easeIn(duration: 0.2)) {
-                            if isSelectedIndMem{
                                 isCanclePopUp = false
-                                isShowSelectedMembers = true
-                            }
                         }
-                        
                     } label: {
                         Text("Confirm")
                             .frame(width: 100,height: 40)
-                        // .padding()
                             .foregroundColor(.white)
                             .background(Color(hex: "#300A60"))
                             .cornerRadius(10)

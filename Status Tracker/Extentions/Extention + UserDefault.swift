@@ -12,12 +12,10 @@ extension UserDefaults{
     static let phoneNumber = "phoneNumber"
     static let password = "password"
     static let confirmPassword = "confirmPassword"
-
     
     static var emailId: String? {
         get{
             return self.standard.string(forKey: email)
-            
         }
         set{
             self.standard.set(newValue, forKey: email)

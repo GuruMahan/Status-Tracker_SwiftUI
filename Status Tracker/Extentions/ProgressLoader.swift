@@ -23,7 +23,6 @@ struct ProgressLoader: ViewModifier {
             .foregroundColor(Color.primary)
             .cornerRadius(20)
             .opacity(self.isShowing ? 1 : 0)
-            
         }
     }
 }

@@ -15,9 +15,6 @@ struct SheetModel: Codable {
 struct Item: Codable {
     var date: String?
     var datas: [DataElement]?
-  
-   
-   
 }
 
 struct DataElement: Codable {
@@ -29,11 +26,12 @@ struct DataElement: Codable {
         case name
         case task
     }
+    
     func copy(with zone: NSZone? = nil) -> DataElement {
         var copy = DataElement()
         copy.name = name
         copy.task = task
-       return copy
+        return copy
     }
 }
 

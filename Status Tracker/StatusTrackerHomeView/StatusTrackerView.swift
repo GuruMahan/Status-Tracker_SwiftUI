@@ -1,4 +1,3 @@
-//
 //  ContentView.swift
 //  Status Tracker
 //
@@ -17,7 +16,7 @@ struct StatusTrackerView: View {
     init() {
         UITextView.appearance().backgroundColor = .clear
     }
-
+    
     var body: some View {
         ZStack{
             VStack{
@@ -26,6 +25,7 @@ struct StatusTrackerView: View {
                         .cornerRadius(20)
                     scrollView
                         .frame(maxWidth: .infinity,maxHeight: .infinity)
+                    
                         .padding(.top,250)
                     if viewModel.showDateList{
                         ScrollView{
@@ -58,18 +58,18 @@ struct StatusTrackerView: View {
                 IndividualMemberPopUpView(viewModel: viewModel).offset(y: self.isShow ? 0 : UIScreen.main.bounds.height)
             }.background((self.isShow ? Color.black.opacity(0.3) : Color.clear))
                 .onTapGesture {
-                withAnimation(.easeOut(duration: 0.3)){
-                    self.isShow.toggle()
+                    withAnimation(.easeOut(duration: 0.3)){
+                        self.isShow.toggle()
+                    }
                 }
-            }
-            .edgesIgnoringSafeArea(.bottom)
+                .edgesIgnoringSafeArea(.bottom)
         }
+        .hideKeyboardWhenTappedAround()
         .onAppear{
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1){
-                self.viewModel.getData()
-            }
+            self.viewModel.getData()
         }
         .loader(isShown: $viewModel.isLoader)
+       
     }
     
     @ViewBuilder var backGroundColoView: some View {
@@ -85,11 +85,6 @@ struct StatusTrackerView: View {
                             }
                         }
                     Image("verifiedMsg")
-                        .onTapGesture {
-                            withAnimation(.easeIn(duration: 0.2)) {
-                                self.viewModel.updateDate()
-                            }
-                        }
                 }
                 .padding(.bottom,160)
                 .padding(.trailing,20)
@@ -108,7 +103,7 @@ struct StatusTrackerView: View {
             }
         }.frame(maxWidth: .infinity,maxHeight: 351)
     }
-
+    
     @ViewBuilder var TitleView: some View {
         ZStack {
             VStack{
@@ -147,9 +142,9 @@ struct StatusTrackerView: View {
                         for datum in filteredData where datum.date == viewModel.dataList?.items?[index].date ?? "" {
                             viewModel.filteredItems = datum.datas ?? []
                             viewModel.textFields = datum.datas ?? []
-                            viewModel.textFields = viewModel.valueMapDataElement()
-                           // viewModel.textFields = viewModel.updateValueMapDataElement()
-                            print("====>\(viewModel.valueMapDataElement())")
+                            viewModel.textFields = viewModel.taskTextMapDataElement()
+                            // viewModel.textFields = viewModel.updateValueMapDataElement()
+                            print("====>\(viewModel.taskTextMapDataElement())")
                         }
                     }
                 }
@@ -164,7 +159,7 @@ struct StatusTrackerView: View {
                     HStack(spacing: 0){
                         withAnimation(.easeIn(duration: 0.2)){
                             ZStack{
-                                Color(hex: viewModel.leftSideDividerColorCode(index: index))
+                                Color(hex: viewModel.taskListLeftCornerColorCode(index: index))
                                 HStack{
                                     leftSideDividerView
                                         .frame(width: 1)
@@ -172,14 +167,15 @@ struct StatusTrackerView: View {
                                 }.padding(.leading,0)
                             }
                         }
-
+                        
                     }
                     .padding(5)
                     .cornerRadius(30)
                 }
             }
             .padding()
-        }.refreshable {
+        }.modifier(Keyboard())
+        .refreshable {
             viewModel.getData()
         }
     }
@@ -199,14 +195,14 @@ struct StatusTrackerView: View {
                         Text("\(datas?.name ?? "")").foregroundColor(.white)
                         Spacer()
                     }.padding()
-                        .background(Color(hex: viewModel.nameViewColorCode(index:index)))
+                        .background(Color(hex: viewModel.taskNameListColorCode(index:index)))
                     VStack(alignment: .leading){
                         
                         VStack(alignment: .leading){
                             TextEditorView(text: $viewModel.textFields[index].text, placeHolder: "Update Task...", index: index, viewModel: viewModel)
                         }.padding()
                     }.frame(maxWidth: .infinity,maxHeight: .infinity)
-                        .background(Color(hex: viewModel.detailsColorCode(index:index)))
+                        .background(Color(hex: viewModel.taskListColorCode(index:index)))
                 }
             }
             .background(Color(hex: "#E1D5D4"))
@@ -214,45 +210,67 @@ struct StatusTrackerView: View {
     }
     
     @ViewBuilder var submitView: some View{
-        VStack{
-            Button {
-                
-            } label: {
-                Text("Submit")
-                    .fontWeight(.bold)
-                    .frame(height: 40)
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .background(Color(hex: "#300A60"))
-                    .cornerRadius(20)
+        ZStack {
+            if viewModel.isShowUpdateSuccessTost {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    taskUpdateSuccessView.offset(y: self.viewModel.isShowUpdateSuccessTost ? 0 : UIScreen.main.bounds.height)
+                    .edgesIgnoringSafeArea(.bottom)
+                }
+              
+            }else{
+                Button {
+                    withAnimation(.easeIn(duration: 0.2)) {
+                        self.viewModel.updateDate()
+                    }
+                } label: {
+                    Text("Submit")
+                        .fontWeight(.bold)
+                        .frame(height: 40)
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .background(Color(hex: "#300A60"))
+                        .cornerRadius(20)
+                }
+                .padding(.leading)
+                .padding(.trailing)
             }
-            .padding(.leading)
-            .padding(.trailing)
         }
         .padding(.bottom,10)
     }
+   
+    @ViewBuilder var taskUpdateSuccessView: some View {
+        VStack {
+            withAnimation(Animation.easeInOut(duration: 0.1)) {
+                Image("success")
+                    .resizable()
+                    .frame(width: viewModel.width,height: viewModel.heigth)
+            }
+            Text("Update Successfully")
+        }.padding()
+    }
 }
 
-struct TextEditorView: View {
+struct TextEditorView: View{
     @Binding var text: String
     var placeHolder:String?
     var index: Int
     var viewModel:SheetViewModel
-    @FocusState private var isFocused: Bool
+    @FocusState private var isTextEditorFocus: Bool
     var body: some View {
         ZStack(alignment: .leading) {
-             TextEditor(text: $text)
-                 .focused($isFocused)
-                 .background(Color(hex: viewModel.detailsColorCode(index:index)))
-                 .scrollContentBackground(.hidden)
+           // FirstResponder(text: $text)
+           TextEditor(text: $text)
+                .focused($isTextEditorFocus)
+                .background(Color(hex: viewModel.taskListColorCode(index:index)))
+                .scrollContentBackground(.hidden)
             if text.isEmpty  {
-                    Text(placeHolder ?? "")
+                Text(placeHolder ?? "")
                     .padding(.horizontal, 8)
                     .padding(.vertical, 12)
                     .foregroundColor(Color.primary.opacity(0.25))
-               .onTapGesture {
-                   isFocused = true
-               }
+                    .onTapGesture {
+                        isTextEditorFocus = true
+                    }
             }
         }.onAppear() {
             UITextView.appearance().backgroundColor = .clear
@@ -260,8 +278,43 @@ struct TextEditorView: View {
             UITextView.appearance().backgroundColor = nil
         }
     }
+    
 }
 
+struct FirstResponder: UIViewRepresentable {
+    @Binding var text: String
+    class Coordinator: NSObject, UITextFieldDelegate {
+        @Binding var text: String
+        var becomeFirstResponder = false
+        
+       init(text: Binding<String>) {
+           self._text = text
+       }
+        func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+            textField.resignFirstResponder()
+        }
+        func textFieldDidChangeSelection(_ textField: UITextField) {
+            text = textField.text ?? ""
+        }
+    }
+    
+    func makeCoordinator() -> Coordinator {
+        return Coordinator(text: $text)
+    }
+    
+    func makeUIView(context: Context) -> some UIView {
+        let textField = UITextField()
+        textField.delegate = context.coordinator
+        return textField
+    }
+    
+    func updateUIView(_ uiView: UIViewType, context: Context) {
+        if !context.coordinator.becomeFirstResponder {
+            uiView.becomeFirstResponder()
+            context.coordinator.becomeFirstResponder = true
+        }
+    }
+}
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {

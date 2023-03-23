@@ -23,7 +23,6 @@ extension Color {
         default:
             (a, r, g, b) = (1, 1, 1, 0)
         }
-        
         self.init(
             .sRGB,
             red: Double(r) / 255,
