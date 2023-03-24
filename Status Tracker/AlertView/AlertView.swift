@@ -13,6 +13,8 @@ struct AlertView: View {
     @Binding var isCanclePopUp:Bool
     @Binding var isShowSelectedMembers:Bool
     @State var presentPopup = false
+    var viewModel: SheetViewModel
+    
     var body: some View {
         ZStack{
             VStack{
@@ -50,6 +52,15 @@ struct AlertView: View {
                         withAnimation(.easeIn(duration: 0.2)) {
                                 isCanclePopUp = false
                         }
+                        var flag = true
+                        for index in 0..<viewModel.textFields.count {
+                            if viewModel.textFields[index].text.isEmpty {
+                                flag = false
+                            }
+                        }
+                        if flag {
+                            viewModel.sendMessage()
+                        }
                     } label: {
                         Text("Confirm")
                             .frame(width: 100,height: 40)
@@ -71,6 +82,6 @@ struct AlertView: View {
 
 struct AlertView_Previews: PreviewProvider {
     static var previews: some View {
-        AlertView( isCanclePopUp: .constant(false), isShowSelectedMembers: .constant(false))
+        AlertView( isCanclePopUp: .constant(false), isShowSelectedMembers: .constant(false), viewModel: SheetViewModel())
     }
 }

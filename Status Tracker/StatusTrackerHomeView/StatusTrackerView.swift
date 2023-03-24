@@ -8,7 +8,6 @@ import SwiftUI
 
 struct StatusTrackerView: View {
     @StateObject var viewModel = SheetViewModel()
-    @State var itemIndex:Int?
     @State var text = ""
     @State var isShowAlertPopUP = false
     @State var isShow = false
@@ -49,7 +48,7 @@ struct StatusTrackerView: View {
             .ignoresSafeArea()
             if isShowAlertPopUP {
                 withAnimation(.easeIn(duration: 1.0)) {
-                    AlertView(isCanclePopUp: $isShowAlertPopUP, isShowSelectedMembers: $isShow)
+                    AlertView(isCanclePopUp: $isShowAlertPopUP, isShowSelectedMembers: $isShow, viewModel: viewModel)
                 }
             }
             
