@@ -13,6 +13,7 @@ struct AlertView: View {
     @Binding var isCanclePopUp:Bool
     @Binding var isShowSelectedMembers:Bool
     @State var presentPopup = false
+    @Binding var isTextFieldEmptyErrorShow: Bool
     var viewModel: SheetViewModel
     
     var body: some View {
@@ -26,15 +27,19 @@ struct AlertView: View {
     
     @ViewBuilder var AlertView: some View {
         HStack {
-            VStack(alignment: .leading,spacing: 20){
-                HStack{
-                    Text("Send Alert Notification")
+            VStack(alignment: .center,spacing: 20){
+                   Text("Send Alert Notification")
                         .fontWeight(.bold)
                         .foregroundColor(.black.opacity(0.6))
                         .padding(.leading,2)
-                }
-                HStack{
-                    Text("Send to Channel")
+                HStack {
+                    Image("forWardMessageIcon")
+                        .resizable()
+                        .renderingMode(.template)
+                        .foregroundColor(Color.green)
+                        .frame(width: 32,height: 32)
+                       
+                    Text("Post to the Channel")
                         .font(.body)
                 }
                 HStack(spacing: 60){
@@ -51,11 +56,18 @@ struct AlertView: View {
                     Button {
                         withAnimation(.easeIn(duration: 0.2)) {
                                 isCanclePopUp = false
+                            
+
                         }
                         var flag = true
                         for index in 0..<viewModel.textFields.count {
                             if viewModel.textFields[index].text.isEmpty {
                                 flag = false
+                                isTextFieldEmptyErrorShow = true
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                 isTextFieldEmptyErrorShow = false
+                                }
+                                
                             }
                         }
                         if flag {
@@ -82,6 +94,6 @@ struct AlertView: View {
 
 struct AlertView_Previews: PreviewProvider {
     static var previews: some View {
-        AlertView( isCanclePopUp: .constant(false), isShowSelectedMembers: .constant(false), viewModel: SheetViewModel())
+        AlertView( isCanclePopUp: .constant(false), isShowSelectedMembers: .constant(false), isTextFieldEmptyErrorShow: .constant(false), viewModel: SheetViewModel())
     }
 }

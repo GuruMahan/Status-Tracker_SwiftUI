@@ -11,6 +11,8 @@ struct StatusTrackerView: View {
     @State var text = ""
     @State var isShowAlertPopUP = false
     @State var isShow = false
+    @State var isTextFieldErrorTost = false
+    @State var heigth = UIScreen.main.bounds.height / 2.3
     
     init() {
         UITextView.appearance().backgroundColor = .clear
@@ -18,14 +20,15 @@ struct StatusTrackerView: View {
     
     var body: some View {
         ZStack{
+            Color.black.opacity(0.05)
             VStack{
                 ZStack(alignment: .top){
                     backGroundColoView
-                        .cornerRadius(20)
+                        .cornerRadius(20, corners: [.bottomRight,.bottomLeft])
                     scrollView
                         .frame(maxWidth: .infinity,maxHeight: .infinity)
-                    
                         .padding(.top,250)
+                    
                     if viewModel.showDateList{
                         ScrollView{
                             ForEach(0..<(viewModel.dataList?.items?.count ?? 0 ),id: \.self ){ index in
@@ -36,22 +39,23 @@ struct StatusTrackerView: View {
                             .background(Color(hex: "#C4A484"))
                             .overlay(RoundedRectangle(cornerRadius: 10)
                                 .stroke(Color(hex: "#7B3F00"), lineWidth: 5))
-                        
                             .padding(.leading,10)
                             .padding(.trailing,150)
                             .padding(.top,140)
                     }
                 }.ignoresSafeArea()
+                if isTextFieldErrorTost {
+                    textFieldErrorTostView
+                }
                 Spacer()
-                submitView
+                updateButtonView.padding(.bottom,2)
             }
             .ignoresSafeArea()
             if isShowAlertPopUP {
                 withAnimation(.easeIn(duration: 1.0)) {
-                    AlertView(isCanclePopUp: $isShowAlertPopUP, isShowSelectedMembers: $isShow, viewModel: viewModel)
+                    AlertView(isCanclePopUp: $isShowAlertPopUP, isShowSelectedMembers: $isShow, isTextFieldEmptyErrorShow: $isTextFieldErrorTost, viewModel: viewModel)
                 }
             }
-            
             VStack{
                 Spacer()
                 IndividualMemberPopUpView(viewModel: viewModel).offset(y: self.isShow ? 0 : UIScreen.main.bounds.height)
@@ -63,30 +67,17 @@ struct StatusTrackerView: View {
                 }
                 .edgesIgnoringSafeArea(.bottom)
         }
-        .hideKeyboardWhenTappedAround()
         .onAppear{
             self.viewModel.getData()
         }
         .loader(isShown: $viewModel.isLoader)
-       
+        .hideKeyboardWhenTappedAround()
     }
     
     @ViewBuilder var backGroundColoView: some View {
         ZStack{
             Color(hex: "#300A60")
             ZStack{
-                HStack{
-                    Spacer()
-                    Image("msgBox").foregroundColor(.white)
-                        .onTapGesture {
-                            withAnimation(.easeIn(duration: 0.2)) {
-                                isShowAlertPopUP = true
-                            }
-                        }
-                    Image("verifiedMsg")
-                }
-                .padding(.bottom,160)
-                .padding(.trailing,20)
                 ZStack{
                     VStack(alignment: .leading,spacing: 0){
                         HStack{
@@ -100,7 +91,8 @@ struct StatusTrackerView: View {
                     }.padding()
                 }
             }
-        }.frame(maxWidth: .infinity,maxHeight: 351)
+        }.frame(maxWidth: .infinity,maxHeight: heigth)
+        
     }
     
     @ViewBuilder var TitleView: some View {
@@ -142,8 +134,6 @@ struct StatusTrackerView: View {
                             viewModel.filteredItems = datum.datas ?? []
                             viewModel.textFields = datum.datas ?? []
                             viewModel.textFields = viewModel.taskTextMapDataElement()
-                            // viewModel.textFields = viewModel.updateValueMapDataElement()
-                            print("====>\(viewModel.taskTextMapDataElement())")
                         }
                     }
                 }
@@ -159,21 +149,27 @@ struct StatusTrackerView: View {
                         withAnimation(.easeIn(duration: 0.2)){
                             ZStack{
                                 Color(hex: viewModel.taskListLeftCornerColorCode(index: index))
+                                
+                                    .cornerRadius(15, corners: [.topLeft,.bottomLeft,.topRight,.bottomRight])
+                                    .padding(1.5)
+                                    .background(Color.white)
+                                    .cornerRadius(15)
+                                
                                 HStack{
                                     leftSideDividerView
                                         .frame(width: 1)
                                     listSheetView( index: index)
+                                        .cornerRadius(10, corners: [.allCorners])
                                 }.padding(.leading,0)
                             }
                         }
-                        
                     }
                     .padding(5)
-                    .cornerRadius(30)
                 }
             }
             .padding()
-        }.modifier(Keyboard())
+        }
+        .modifier(Keyboard())
         .refreshable {
             viewModel.getData()
         }
@@ -208,44 +204,81 @@ struct StatusTrackerView: View {
         }
     }
     
-    @ViewBuilder var submitView: some View{
+    @ViewBuilder var updateButtonView: some View{
         ZStack {
             if viewModel.isShowUpdateSuccessTost {
                 withAnimation(.easeInOut(duration: 0.3)) {
                     taskUpdateSuccessView.offset(y: self.viewModel.isShowUpdateSuccessTost ? 0 : UIScreen.main.bounds.height)
-                    .edgesIgnoringSafeArea(.bottom)
+                        .edgesIgnoringSafeArea(.bottom)
                 }
-              
             }else{
-                Button {
-                    withAnimation(.easeIn(duration: 0.2)) {
-                        self.viewModel.updateDate()
-                    }
-                } label: {
-                    Text("Submit")
-                        .fontWeight(.bold)
-                        .frame(height: 40)
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
+                HStack(spacing: 10) {
+                    Button {
+                        withAnimation(.easeIn(duration: 0.2)) {
+                            self.viewModel.updateDate()
+                        }
+                    } label: {
+                        Text("Update")
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                            .padding()
+                    }  .frame(height: 40)
+                        .frame(maxWidth: 150)
                         .background(Color(hex: "#300A60"))
                         .cornerRadius(20)
-                }
-                .padding(.leading)
-                .padding(.trailing)
+                    postMessageButtonView
+                }.padding(.leading)
+                    .padding(.trailing)
             }
         }
         .padding(.bottom,10)
     }
-   
+    
+    @ViewBuilder var postMessageButtonView: some View {
+        VStack {
+            Button {
+                withAnimation(.easeIn(duration: 0.2)) {
+                    isShowAlertPopUP = true
+                }
+            } label: {
+                Text("Send")
+                    .fontWeight(.bold)
+                    .foregroundColor(.white)
+                    .padding()
+            } .frame(height: 40)
+                .frame(maxWidth: 150)
+                .background(Color(hex: "#300A60"))
+                .cornerRadius(20)
+                .padding(.leading)
+                .padding(.trailing)
+        }
+    }
+    
     @ViewBuilder var taskUpdateSuccessView: some View {
         VStack {
             withAnimation(Animation.easeInOut(duration: 0.1)) {
-                Image("success")
-                    .resizable()
-                    .frame(width: viewModel.width,height: viewModel.heigth)
+                withAnimation(.spring(blendDuration: 0.5)){
+                    Image("success")
+                        .resizable()
+                        .frame(width: viewModel.width,height: viewModel.heigth)
+                }
             }
-            Text("Update Successfully")
+            Text("Updated Successfully")
         }.padding()
+    }
+    
+    @ViewBuilder var textFieldErrorTostView: some View {
+        VStack {
+            Text("Please enter your task")
+                .padding()
+                .frame(maxWidth: .infinity)
+                .frame(height: 40)
+                .foregroundColor(.white)
+                .background(Color.black)
+                .cornerRadius(10, corners: .allCorners)
+                .padding(.leading,10)
+                .padding(.trailing,10)
+        }
     }
 }
 
@@ -257,8 +290,7 @@ struct TextEditorView: View{
     @FocusState private var isTextEditorFocus: Bool
     var body: some View {
         ZStack(alignment: .leading) {
-           // FirstResponder(text: $text)
-           TextEditor(text: $text)
+            TextEditor(text: $text)
                 .focused($isTextEditorFocus)
                 .background(Color(hex: viewModel.taskListColorCode(index:index)))
                 .scrollContentBackground(.hidden)
@@ -278,41 +310,6 @@ struct TextEditorView: View{
         }
     }
     
-}
-
-struct FirstResponder: UIViewRepresentable {
-    @Binding var text: String
-    class Coordinator: NSObject, UITextFieldDelegate {
-        @Binding var text: String
-        var becomeFirstResponder = false
-        
-       init(text: Binding<String>) {
-           self._text = text
-       }
-        func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-            textField.resignFirstResponder()
-        }
-        func textFieldDidChangeSelection(_ textField: UITextField) {
-            text = textField.text ?? ""
-        }
-    }
-    
-    func makeCoordinator() -> Coordinator {
-        return Coordinator(text: $text)
-    }
-    
-    func makeUIView(context: Context) -> some UIView {
-        let textField = UITextField()
-        textField.delegate = context.coordinator
-        return textField
-    }
-    
-    func updateUIView(_ uiView: UIViewType, context: Context) {
-        if !context.coordinator.becomeFirstResponder {
-            uiView.becomeFirstResponder()
-            context.coordinator.becomeFirstResponder = true
-        }
-    }
 }
 
 struct ContentView_Previews: PreviewProvider {
