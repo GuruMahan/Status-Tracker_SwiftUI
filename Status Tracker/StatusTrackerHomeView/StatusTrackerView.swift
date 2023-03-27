@@ -16,6 +16,7 @@ struct StatusTrackerView: View {
     
     init() {
         UITextView.appearance().backgroundColor = .clear
+       
     }
     
     var body: some View {
