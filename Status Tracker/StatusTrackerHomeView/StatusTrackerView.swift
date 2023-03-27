@@ -20,15 +20,14 @@ struct StatusTrackerView: View {
     
     var body: some View {
         ZStack{
-            Color.black.opacity(0.05)
             VStack{
                 ZStack(alignment: .top){
-                    backGroundColoView
-                        .cornerRadius(20, corners: [.bottomRight,.bottomLeft])
-                    scrollView
-                        .frame(maxWidth: .infinity,maxHeight: .infinity)
-                        .padding(.top,250)
-                    
+                    VStack {
+                        backGroundColoView
+                            .cornerRadius(20, corners: [.bottomRight,.bottomLeft])
+                        scrollView
+                            .padding(.top,-70)
+                    }
                     if viewModel.showDateList{
                         ScrollView{
                             ForEach(0..<(viewModel.dataList?.items?.count ?? 0 ),id: \.self ){ index in
@@ -92,7 +91,6 @@ struct StatusTrackerView: View {
                 }
             }
         }.frame(maxWidth: .infinity,maxHeight: heigth)
-        
     }
     
     @ViewBuilder var TitleView: some View {
@@ -212,7 +210,7 @@ struct StatusTrackerView: View {
                         .edgesIgnoringSafeArea(.bottom)
                 }
             }else{
-                HStack(spacing: 10) {
+                HStack(spacing: 13) {
                     Button {
                         withAnimation(.easeIn(duration: 0.2)) {
                             self.viewModel.updateDate()
@@ -268,8 +266,9 @@ struct StatusTrackerView: View {
     }
     
     @ViewBuilder var textFieldErrorTostView: some View {
+        
         VStack {
-            Text("Please enter your task")
+            Text("\(viewModel.tostTextFieldText)")
                 .padding()
                 .frame(maxWidth: .infinity)
                 .frame(height: 40)

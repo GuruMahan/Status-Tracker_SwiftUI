@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1885696929D17608004400F1 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1885696829D17608004400F1 /* Launch Screen.storyboard */; };
 		189CFE7C29C6136500635D2F /* IndividualMemberPopUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 189CFE7B29C6136500635D2F /* IndividualMemberPopUpView.swift */; };
 		189CFE7E29C63D8800635D2F /* UIScreenExtention.swift in Sources */ = {isa = PBXBuildFile; fileRef = 189CFE7D29C63D8800635D2F /* UIScreenExtention.swift */; };
 		189F718529C5D51200FF1194 /* AlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 189F718429C5D51200FF1194 /* AlertView.swift */; };
@@ -22,6 +23,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1885696829D17608004400F1 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
+		1885696A29D17941004400F1 /* Status-Tracker-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Status-Tracker-Info.plist"; sourceTree = SOURCE_ROOT; };
 		189CFE7B29C6136500635D2F /* IndividualMemberPopUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndividualMemberPopUpView.swift; sourceTree = "<group>"; };
 		189CFE7D29C63D8800635D2F /* UIScreenExtention.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIScreenExtention.swift; sourceTree = "<group>"; };
 		189F718429C5D51200FF1194 /* AlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertView.swift; sourceTree = "<group>"; };
@@ -83,11 +86,13 @@
 		18B918A829BF486900F048A5 /* Status Tracker */ = {
 			isa = PBXGroup;
 			children = (
+				1885696A29D17941004400F1 /* Status-Tracker-Info.plist */,
 				18B918C629C043AE00F048A5 /* StatusTrackerHomeView */,
 				189F718329C5D4D200FF1194 /* AlertView */,
 				189CFE7A29C6130900635D2F /* IndividualMemberPopup */,
 				18B918BB29C0431C00F048A5 /* Extentions */,
 				18B918A929BF486900F048A5 /* Status_TrackerApp.swift */,
+				1885696829D17608004400F1 /* Launch Screen.storyboard */,
 				18B918AD29BF486A00F048A5 /* Assets.xcassets */,
 				18B918AF29BF486A00F048A5 /* Preview Content */,
 			);
@@ -181,6 +186,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1885696929D17608004400F1 /* Launch Screen.storyboard in Resources */,
 				18B918B129BF486A00F048A5 /* Preview Assets.xcassets in Resources */,
 				18B918AE29BF486A00F048A5 /* Assets.xcassets in Resources */,
 			);
@@ -328,15 +334,17 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Status Tracker/Preview Content\"";
 				DEVELOPMENT_TEAM = SY4CHD2YQ6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Status-Tracker-Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -357,15 +365,17 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Status Tracker/Preview Content\"";
 				DEVELOPMENT_TEAM = SY4CHD2YQ6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Status-Tracker-Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (

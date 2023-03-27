@@ -63,11 +63,11 @@ struct AlertView: View {
                         for index in 0..<viewModel.textFields.count {
                             if viewModel.textFields[index].text.isEmpty {
                                 flag = false
+                                    viewModel.textIsEmptyTostErrorMsg()
                                 isTextFieldEmptyErrorShow = true
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                                  isTextFieldEmptyErrorShow = false
                                 }
-                                
                             }
                         }
                         if flag {
@@ -80,7 +80,6 @@ struct AlertView: View {
                             .background(Color(hex: "#300A60"))
                             .cornerRadius(10)
                     }.padding(.leading)
-                    
                 }
             }.frame(maxWidth: .infinity)
                 .frame(height: 200)

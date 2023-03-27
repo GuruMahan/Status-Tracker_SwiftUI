@@ -17,6 +17,7 @@ class SheetViewModel: ObservableObject{
     @Published var textFields: [DataElement] = []
     @Published var taskText = ""
     @Published var updatedDate = ""
+    @Published var tostTextFieldText = ""
     @Published var isUpdated: Bool = false
     @Published var selectedDate: String = ""
     @Published var isShowUpdateSuccessTost: Bool = false
@@ -25,6 +26,7 @@ class SheetViewModel: ObservableObject{
     
     init(){
         getData()
+        
     }
     
     //MARK: -> DateFormatter
@@ -305,11 +307,61 @@ extension SheetViewModel {
     }
 }
 
-/*MARK: -> GoogleSheet Link:
-https://docs.google.com/spreadsheets/d/1brId26gnwb06OvCiLMZRMZeXiCc80Ve2nTLR2SjBASk/edit#gid=0
-MARK: -> GoogleSheet Api:
-"https://script.google.com/macros/s/AKfycbzcPoBAz86gnLfIeAyljB4HwsFEYon6uPhvwTS0Xjk4vXib0nsZ-4zjiVi9lkRUVzW0_w/exec?action=get"
-POSTAPI ->//https://script.google.com/macros/s/AKfycby2MrORf9DeGL1sM0F0oDSg4ijg_-Oe5drhHvgoU8wB6uiODyiz4TCy7Z4BKRMZb37EWQ/exec?action=UPDATE&date=3/8/23&palani=fazil hjhjjknk&fazil=taskgtrrttrtrbtgbt&saran=syed&balaji=palani&maruthu=syed&abdullah=uyg34touy3gu3iugrowerugwieruygi
+extension SheetViewModel {
+    func textIsEmptyTostErrorMsg() {
+        var palaniTask: String = ""
+        var balajiTask: String = ""
+        var saranTask: String = ""
+        var fazilTask: String = ""
+        var maruthuTask: String = ""
+        var abdullahTask: String = ""
+        for nonUpdateData in textFields {
+            if nonUpdateData.name == "palani" {
+                palaniTask = nonUpdateData.text
+                if palaniTask.isEmpty {
+                    tostTextFieldText = "Please enter palani's' task"
+                }
+            }
+            if nonUpdateData.name == "balaji" {
+                balajiTask = nonUpdateData.text
+                if balajiTask.isEmpty {
+                    tostTextFieldText = "Please enter balaji's' task"
+                }
+            }
+            if nonUpdateData.name == "saran" {
+                saranTask = nonUpdateData.text
+                if saranTask.isEmpty {
+                    tostTextFieldText = "Please enter saran's' task"
+                }
+            }
+            if nonUpdateData.name == "fazil" {
+                fazilTask = nonUpdateData.text
+                if fazilTask.isEmpty {
+                    tostTextFieldText = "Please enter fazil's' task"
+                }
+            }
+            if nonUpdateData.name == "maruthu" {
+                maruthuTask = nonUpdateData.text
+                if maruthuTask.isEmpty {
+                    tostTextFieldText = "Please enter maruthu's' task"
+                }
+            }
+            if nonUpdateData.name == "abdullah" {
+                abdullahTask = nonUpdateData.text
+                if abdullahTask.isEmpty {
+                    tostTextFieldText = "Please enter abdullah's' task"
+                }
+            }
+        }
+    }
+}
 
-slackMsgAPI-> //https://hooks.slack.com/services/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
-*/
+
+/*MARK: -> GoogleSheet Link:
+ https://docs.google.com/spreadsheets/d/1brId26gnwb06OvCiLMZRMZeXiCc80Ve2nTLR2SjBASk/edit#gid=0
+ MARK: -> GoogleSheet Api:
+ "https://script.google.com/macros/s/AKfycbzcPoBAz86gnLfIeAyljB4HwsFEYon6uPhvwTS0Xjk4vXib0nsZ-4zjiVi9lkRUVzW0_w/exec?action=get"
+ POSTAPI ->//https://script.google.com/macros/s/AKfycby2MrORf9DeGL1sM0F0oDSg4ijg_-Oe5drhHvgoU8wB6uiODyiz4TCy7Z4BKRMZb37EWQ/exec?action=UPDATE&date=3/8/23&palani=fazil hjhjjknk&fazil=taskgtrrttrtrbtgbt&saran=syed&balaji=palani&maruthu=syed&abdullah=uyg34touy3gu3iugrowerugwieruygi
+ 
+ slackMsgAPI-> //https://hooks.slack.com/services/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
+ */
